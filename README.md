@@ -1,73 +1,121 @@
-# Welcome to your Lovable project
+# Link Glow Analytics Hub
 
-## Project info
+![Project Logo](public/placeholder.svg) <!-- Replace with actual logo if available -->
 
-**URL**: https://lovable.dev/projects/5c4eeefe-b4c2-4390-8ccc-bd5a78d87f7f
+A modern URL shortener with comprehensive analytics capabilities, built with React, TypeScript, and MongoDB.
 
-## How can I edit this code?
+## Features
 
-There are several ways of editing your application.
+- **URL Shortening**: Create short, memorable links
+- **Custom Aliases**: Option to create custom short URLs
+- **Link Analytics**: Track clicks, locations, devices, and browsers
+- **QR Code Generation**: Generate QR codes for your shortened links
+- **User Authentication**: Secure login Page
+- **Dashboard**: Beautiful data visualization of link performance
+- **API Integration**: Ready-to-use API endpoints
 
-**Use Lovable**
+## Tech Stack
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/5c4eeefe-b4c2-4390-8ccc-bd5a78d87f7f) and start prompting.
+- **Frontend**: 
+  - React + TypeScript
+  - Vite (Build Tool)
+  - Tailwind CSS (Styling)
+  - ShadCN UI Components
+- **Backend**:
+  - Node.js (API)
+- **Other**:
+  - Axios (HTTP Client)
+  - React Router (Routing)
+  - Sonner (Toasts)
 
-Changes made via Lovable will be committed automatically to this repo.
+## Getting Started
 
-**Use your preferred IDE**
+### Prerequisites
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- Node.js (v18+ recommended)
+- npm or yarn
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Installation
 
-Follow these steps:
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/link-glow-analytics-hub.git
+cd link-glow-analytics-hub
+```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+2. Install dependencies:
+```bash
+npm install
+```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+3. Set up environment variables:
+Create a `.env` file in the root directory with the following:
+```env
+VITE_API_BASE_URL=http://localhost:3000
+MONGODB_URI=mongodb://localhost:27017/linkglow
+JWT_SECRET=your_jwt_secret_here
+```
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+4. Start the development server:
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## Project Structure
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```
+link-glow-analytics-hub/
+├── public/            # Static assets
+├── src/               # Source code
+│   ├── components/    # Reusable components
+│   ├── context/       # React context providers
+│   ├── hooks/         # Custom hooks
+│   ├── lib/           # Utility functions
+│   ├── pages/         # Application pages
+│   ├── types/         # TypeScript type definitions
+│   ├── App.tsx        # Main application component
+│   └── main.tsx       # Application entry point
+├── .gitignore
+├── package.json
+├── README.md
+└── vite.config.ts     # Vite configuration
+```
 
-**Use GitHub Codespaces**
+## Available Scripts
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+- `npm run dev`: Start development server
+- `npm run build`: Build for production
+- `npm run lint`: Run ESLint
+- `npm run preview`: Preview production build
 
-## What technologies are used for this project?
 
-This project is built with:
+## Screenshots
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+![Login Preview](assets/Screenshot%202025-04-13%20101901.png)
 
-## How can I deploy this project?
+![Dashboard Preview](assets/Screenshot%202025-04-13%20101945.png)
+![Dashboard Preview](assets/Screenshot%202025-04-13%20102144.png)
+![Dashboard Preview](assets/Screenshot%202025-04-13%20102109.png)
 
-Simply open [Lovable](https://lovable.dev/projects/5c4eeefe-b4c2-4390-8ccc-bd5a78d87f7f) and click on Share -> Publish.
+![Analytics Preview](assets/Screenshot%202025-04-13%20102029.png)
+![Analytics Preview](assets/Screenshot%202025-04-13%20102046.png)
 
-## Can I connect a custom domain to my Lovable project?
+## Contributing
 
-Yes it is!
+Contributions are welcome! Please follow these steps:
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+## Contact
+
+Your Name - subratgangwar03@gmail.com
+
+Project Link: [https://github.com/ssubrt/link-glow-analytics-hub](https://github.com/ssubrt/link-glow-analytics-hub)

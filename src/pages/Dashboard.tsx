@@ -1,13 +1,13 @@
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useUrl } from "@/context/UrlContext";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Calendar as CalendarIcon, Loader2, Plus, Link, Copy, QrCode, ExternalLink, BarChart, RefreshCw } from "lucide-react";
+import { Calendar as CalendarIcon, Loader2, Plus, Link, Copy, QrCode, ExternalLink, BarChart, RefreshCw, ChevronLeft, ChevronRight } from "lucide-react";
 import Header from "@/components/Header";
-import { Navigate } from "react-router-dom";
+import { Navigate, Route, useNavigate } from "react-router-dom";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
@@ -17,7 +17,7 @@ import { ShortenedUrl } from "@/types";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 const Dashboard: React.FC = () => {
-  const { urls, isLoading, shortenUrl, generateQrCode } = useUrl();
+  const { urls, isLoading, shortenUrl, generateQrCode} = useUrl();
   const { isAuthenticated } = useAuth();
   const [originalUrl, setOriginalUrl] = useState("");
   const [customAlias, setCustomAlias] = useState("");
@@ -26,10 +26,30 @@ const Dashboard: React.FC = () => {
   const [selectedUrl, setSelectedUrl] = useState<ShortenedUrl | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 2;
+  const navigate = useNavigate();
+
+  // Filter URLs based on search term
+  const filteredUrls = useMemo(() => {
+    return urls.filter(
+      (url) =>
+        url.originalUrl.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        url.fullShortUrl.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        url.shortCode.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [urls, searchTerm]);
 
   if (!isAuthenticated) {
     return <Navigate to="/login" />;
   }
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredUrls.length / itemsPerPage);
+  const paginatedUrls = filteredUrls.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,6 +86,11 @@ const Dashboard: React.FC = () => {
       setSelectedUrl(url);
     } catch (error) {
       console.error("Error generating QR code:", error);
+    }
+  };
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
     }
   };
 
@@ -157,6 +182,18 @@ const Dashboard: React.FC = () => {
           </CardContent>
         </Card>
         
+        {/* Search Bar */}
+        <div className="mb-6">
+          <Input
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(1); // Reset to first page on search
+            }}
+            placeholder="Search by original URL, short URL, or alias..."
+            className="max-w-md"
+          />
+        </div>
         
         
         {/* URLs Table */}
@@ -172,10 +209,16 @@ const Dashboard: React.FC = () => {
             ) : urls.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
                 <Link className="h-16 w-16 mx-auto mb-4 text-gray-300" />
-                <p>No URLs yet. Create your first shortened link above!</p>
+                {/* <p>No URLs yet. Create your first shortened link above!</p> */}
                 {/* <p>No URLs found. {searchTerm ? "Try a different search term." : "Create your first shortened link above!"}</p> */}
+                <p>
+                {searchTerm
+                    ? "No URLs match your search."
+                    : "No URLs yet. Create your first shortened link above!"}
+                </p>
               </div>
             ) : (
+              <>
               <div className="overflow-x-auto">
                 <table className="w-full border-collapse">
                   <thead>
@@ -189,13 +232,13 @@ const Dashboard: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {urls.map((url) => (
+                    {paginatedUrls.map((url) => (
                       <tr
                         key={url.id}
                         className="border-b border-gray-200 hover:bg-gray-50"
                       >
                         <td className="py-3 px-4">
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 cursor-pointer">
                             <ExternalLink className="h-4 w-4 text-gray-400 flex-shrink-0" />
                             <span className="truncate max-w-[150px]">
                               {url.originalUrl}
@@ -203,10 +246,12 @@ const Dashboard: React.FC = () => {
                           </div>
                         </td>
                         <td className="py-3 px-4">
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 cursor-pointer">
+                            <a href={url.originalUrl}>
                             <span className="text-brand-600 font-medium">{url.fullShortUrl}</span>
+                            </a>
                             <button
-                              onClick={() => handleCopy(url.fullShortUrl)}
+                              onClick={() =>  handleCopy(url.fullShortUrl)}
                               className="text-gray-500 hover:text-gray-700"
                             >
                               <Copy className="h-4 w-4" />
@@ -236,7 +281,7 @@ const Dashboard: React.FC = () => {
                               variant="ghost"
                               size="sm"
                               title="View Analytics"
-                              onClick={() => window.location.href = `/analytics/${url.id}`}
+                              onClick={() => navigate(`/analytics/${url.id}`)}
                             >
                               <BarChart className="h-4 w-4" />
                             </Button>
@@ -247,6 +292,38 @@ const Dashboard: React.FC = () => {
                   </tbody>
                 </table>
               </div>
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                  <div className="flex items-center justify-between mt-6">
+                    <div className="text-sm text-gray-600">
+                      Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
+                      {Math.min(currentPage * itemsPerPage, filteredUrls.length)}{" "}
+                      of {filteredUrls.length} URLs
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                      </Button>
+                      <span className="text-sm">
+                        Page {currentPage} of {totalPages}
+                      </span>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                      >
+                        <ChevronRight className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
           </CardContent>
         </Card>
